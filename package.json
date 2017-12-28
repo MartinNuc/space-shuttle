@@ -1,0 +1,28 @@
+{
+  "name": "space-shuttle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MartinNuc/space-shuttle.git"
+  },
+  "author": "Martin Nuc <martin@nuc.cz>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MartinNuc/space-shuttle/issues"
+  },
+  "homepage": "https://github.com/MartinNuc/space-shuttle#readme",
+  "dependencies": {
+    "awesome-typescript-loader": "3.4.1",
+    "html-webpack-plugin": "2.30.1",
+    "rxjs": "5.5.6",
+    "typescript": "2.5.x",
+    "webpack": "3.10.0",
+    "webpack-dev-server": "2.9.7"
+  }
+}
