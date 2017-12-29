@@ -1,1 +1,4 @@
-export type Movement = 'right' | 'left' | 'accelerate' | 'break';
+export interface MovementDirection {
+  angle: number;
+  velocity: number;
+};

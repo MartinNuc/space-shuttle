@@ -1,101 +1,57 @@
 import { Shuttle } from "./shuttle";
 import { Positionable } from "./positionable";
 import { Shot } from "./shot";
+import { GameState } from "./game-state";
   
 export class Game {
-  positionedShuttle: Positionable<Shuttle>;
-  shots: Positionable<Shot>[] = [];
 
-  constructor(private width: number, private height: number) {
-    this.positionedShuttle = new Positionable<Shuttle>(new Shuttle(0, 45), 50, 50);
+  constructor(private ctx: CanvasRenderingContext2D, private width: number, private height: number) {
   }
 
-  moveShuttle() {
-    const velocity = this.positionedShuttle.object.velocity;
-    const angle = this.positionedShuttle.object.angle;
-
-    const c = velocity;
-    const a = c * Math.sin(angle / Math.PI);
-    const b = c * Math.cos(angle / Math.PI);
-
-    const xOffset = b;
-    const yOffset = a;
-
-    this.positionedShuttle.x = this.positionedShuttle.x + xOffset;
-    this.positionedShuttle.x = this.positionedShuttle.x <= 0 ? this.width + this.positionedShuttle.x : this.positionedShuttle.x;
-    this.positionedShuttle.x = this.positionedShuttle.x % this.width;
-
-    this.positionedShuttle.y = this.positionedShuttle.y + yOffset;
-    this.positionedShuttle.y = this.positionedShuttle.y <= 0 ? this.height + this.positionedShuttle.y : this.positionedShuttle.y;
-    this.positionedShuttle.y = this.positionedShuttle.y % this.height;
+  draw(state: GameState) {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.drawShuttle(state.shuttle);
+    this.drawShots(state.shots);
+    this.drawSpeed(state.shuttle.object.velocity);
   }
 
-  moveShots() {
-    this.shots.forEach(shot => {
-      const angle = shot.object.angle;
-      const c = shot.object.velocity;
-      const a = c * Math.sin(angle / Math.PI);
-      const b = c * Math.cos(angle / Math.PI);
-
-      const xOffset = b;
-      const yOffset = a;
-
-      shot.x += xOffset;
-      shot.y += yOffset;
-    });
-  }
-
-  shoot(x: number, y: number, angle: number): any {
-    this.shots.push(new Positionable<Shot>(new Shot(angle), x, y));
-  }
-
-  removeShotsOutOfScreen() {
-    this.shots = this.shots.filter(shot => shot.x > 0 && shot.y > 0 && shot.x < this.width && shot.y < this.height);
-  }
-
-  tick(ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, this.width, this.height);
-
-    this.moveShots();
-    this.removeShotsOutOfScreen()
-    this.moveShuttle();
-
-    this.drawShuttle(ctx);
-    this.drawShots(ctx);
-  }
-
-  drawShuttle(ctx: CanvasRenderingContext2D) {
+  drawShuttle(shuttle: Positionable<Shuttle>) {
     const SHUTTLE_BODY = 20;
     const SHUTTLE_CABINE = 5;
 
-    ctx.beginPath();
-    ctx.arc(this.positionedShuttle.x, this.positionedShuttle.y, SHUTTLE_BODY, 0, 2 * Math.PI);
-    ctx.stroke();
+    this.ctx.beginPath();
+    this.ctx.arc(shuttle.x, shuttle.y, SHUTTLE_BODY, 0, 2 * Math.PI);
+    this.ctx.stroke();
 
-    const alpha = this.positionedShuttle.object.angle;
+    const alpha = Math.PI / 180 * shuttle.object.angle;
     const c = SHUTTLE_BODY + SHUTTLE_CABINE;
-    const a = c * Math.sin(alpha / Math.PI);
-    const b = c * Math.cos(alpha / Math.PI);
+    const a = c * Math.sin(alpha);
+    const b = c * Math.cos(alpha);
 
     const xOffset = b;
     const yOffset = a;
 
     const cabine = {
-      x: this.positionedShuttle.x + xOffset,
-      y: this.positionedShuttle.y + yOffset
+      x: shuttle.x + xOffset,
+      y: shuttle.y + yOffset
     }
 
-    ctx.beginPath();
-    ctx.arc(cabine.x, cabine.y, SHUTTLE_CABINE, 0, 2 * Math.PI);
-    ctx.stroke();
+    this.ctx.beginPath();
+    this.ctx.arc(cabine.x, cabine.y, SHUTTLE_CABINE, 0, 2 * Math.PI);
+    this.ctx.stroke();
   }
 
-  drawShots(ctx: CanvasRenderingContext2D) {
-    this.shots.forEach(shot => {
-      ctx.beginPath();
-      ctx.arc(shot.x, shot.y, 3, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
+  drawSpeed(speed: number): any {
+    this.ctx.font = "12px Arial";
+    this.ctx.fillText(`Speed: ${speed}`, 10, 20);
+  }
+
+  drawShots(shots: Positionable<Shot>[]) {
+    shots.forEach(shot => {
+      this.ctx.beginPath();
+      this.ctx.arc(shot.x, shot.y, 3, 0, 2 * Math.PI);
+      this.ctx.fill();
+      this.ctx.stroke();
     })
   }
 }

@@ -1,4 +1,3 @@
 export class Shot {
-  velocity = 30;
-  constructor(public angle: number) {}
+  constructor(public angle: number, public velocity = 30) { }
 }
