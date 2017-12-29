@@ -1,0 +1,1 @@
+export type Movement = 'right' | 'left' | 'accelerate' | 'break';
